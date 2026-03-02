@@ -320,7 +320,7 @@ def insert_data_sync(collection_name: str, docs: list[dict], batch_size: int = 5
         batch = docs[i : i + batch_size]
 
         try:
-            operations = [InsertOne(doc) for doc in batch]
+            operations = [ReplaceOne({"_id": doc["_id"]}, doc, upsert=True) for doc in batch]
             collection.bulk_write(operations, ordered=False)
         except BulkWriteError as bwe:
             for error in bwe.details.get("writeErrors", []):
